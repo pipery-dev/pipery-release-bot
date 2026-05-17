@@ -55,3 +55,26 @@ curl -X POST http://localhost:8080/v1/release-plans/execute \
 ```
 
 The request can override `owner`, `repo`, `version`, `base_ref`, and `release_notes_path`; unset values use configuration defaults.
+
+## Helm
+
+Install the chart with an existing private-key secret:
+
+```sh
+helm upgrade --install pipery-release-bot ./charts/pipery-release-bot \
+  --namespace pipery \
+  --create-namespace \
+  --set privateKey.existingSecret=pipery-release-bot-private-key \
+  --set apiToken.existingSecret=pipery-release-bot-api-token
+```
+
+Override `config.data` in a values file to set GitHub App installations, release branch patterns, tag behavior, and the default release notes path.
+
+## GitHub Actions
+
+The repository includes:
+
+- `.github/workflows/ci.yml` using `pipery-dev/pipery-golang-ci@v1`
+- `.github/workflows/deploy.yml` using `pipery-dev/pipery-helm-cd@v1`
+
+Set `KUBECONFIG_B64` as a repository or environment secret for the deploy workflow.

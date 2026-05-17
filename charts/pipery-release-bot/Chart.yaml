@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pipery-release-bot
+description: GitHub App service for creating Pipery release branches, tags, and releases.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

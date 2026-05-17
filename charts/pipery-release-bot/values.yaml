@@ -1,0 +1,93 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/pipery-dev/pipery-release-bot
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: pipery-release-bot.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+apiToken:
+  existingSecret: ""
+  secretKey: api-token
+  value: ""
+
+config:
+  existingSecret: ""
+  secretKey: config.json
+  data:
+    listen_addr: ":8080"
+    target:
+      owner: pipery-dev
+      repo: example
+      base_ref: main
+      version: v0.1.0
+      release_notes_path: CHANGELOG.md
+    branch_patterns:
+      - pattern: release/{version}
+        create_tag: true
+        tag_name: "{version}"
+        create_release: true
+    installations:
+      default:
+        app_id: 12345
+        installation_id: 67890
+        private_key_file: /etc/pipery/private-key/github-app.pem
+
+privateKey:
+  existingSecret: ""
+  secretKey: github-app.pem
+  value: ""
+
+probes:
+  liveness:
+    enabled: true
+    initialDelaySeconds: 10
+    periodSeconds: 20
+  readiness:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
