@@ -78,3 +78,5 @@ The repository includes:
 - `.github/workflows/deploy.yml` using `pipery-dev/pipery-helm-cd@v1`
 
 Set `KUBECONFIG_B64` as a repository or environment secret for the deploy workflow.
+
+On every push to `main` or `v*` tag, the CI workflow also publishes an ArgoCD Application and values override to `pipery-dev/pipery-argocd` under `applications/pipery-release-bot/`. Set `PIPERY_ARGOCD_TOKEN` to a token that can write to that private repository.
