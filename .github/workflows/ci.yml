@@ -44,5 +44,23 @@ jobs:
           chart_target_revision: ${{ github.ref_name }}
           image_repository: ghcr.io/${{ github.repository }}
           image_tag: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+          helm_values: |
+            ingress:
+              enabled: true
+              hosts:
+                - host: release-bot.pipery.dev
+                  paths:
+                    - path: /
+                      pathType: Prefix
+            dex:
+              enabled: true
+              issuer: https://auth.pipery.dev/dex
+              clientId: pipery-release-bot
+            apiToken:
+              existingSecret: pipery-release-bot-api
+            config:
+              existingSecret: pipery-release-bot-config
+            privateKey:
+              existingSecret: pipery-release-bot-private-key
           commit_user_name: pipery-release-bot
           commit_user_email: pipery-release-bot@users.noreply.github.com
