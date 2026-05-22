@@ -34,11 +34,11 @@ service:
   port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
   annotations: {}
   hosts:
-    - host: pipery-release-bot.local
+    - host: release-bot.pipery.dev
       paths:
         - path: /
           pathType: Prefix
@@ -51,17 +51,17 @@ tolerations: []
 affinity: {}
 
 apiToken:
-  existingSecret: ""
+  existingSecret: pipery-release-bot-api
   secretKey: api-token
   value: ""
 
 dex:
-  enabled: false
+  enabled: true
   issuer: https://auth.pipery.dev/dex
   clientId: pipery-release-bot
 
 config:
-  existingSecret: ""
+  existingSecret: pipery-release-bot-config
   secretKey: config.json
   data:
     listen_addr: ":8080"
@@ -83,7 +83,7 @@ config:
         private_key_file: /etc/pipery/private-key/github-app.pem
 
 privateKey:
-  existingSecret: ""
+  existingSecret: pipery-release-bot-private-key
   secretKey: github-app.pem
   value: ""
 
