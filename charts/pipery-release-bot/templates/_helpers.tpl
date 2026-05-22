@@ -36,8 +36,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
 
-{{- define "pipery-release-bot.configSecretName" -}}
-{{- default (printf "%s-config" (include "pipery-release-bot.fullname" .)) .Values.config.existingSecret -}}
+{{- define "pipery-release-bot.configName" -}}
+{{- default (printf "%s-config" (include "pipery-release-bot.fullname" .)) .Values.config.existingConfigMap -}}
 {{- end -}}
 
 {{- define "pipery-release-bot.privateKeySecretName" -}}

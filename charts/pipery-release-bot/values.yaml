@@ -61,7 +61,7 @@ dex:
   clientId: pipery-release-bot
 
 config:
-  existingSecret: pipery-release-bot-config
+  existingConfigMap: ""
   secretKey: config.json
   data:
     listen_addr: ":8080"
