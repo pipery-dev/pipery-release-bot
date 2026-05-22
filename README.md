@@ -36,7 +36,7 @@ Set `PIPERY_RELEASE_CONFIG` to a JSON file:
 
 Private keys are loaded from `private_key_file` or `private_key_env`; do not put key material in source control.
 
-Set `api_token` in the config or `PIPERY_RELEASE_API_TOKEN` in the environment to require `Authorization: Bearer <token>` for the release execution API.
+Set `api_token` in the config or `PIPERY_RELEASE_API_TOKEN` in the environment to require `Authorization: Bearer <token>` for the release execution API. To accept Dex OIDC bearer tokens instead, set `PIPERY_DEX_ISSUER=https://auth.pipery.dev/dex` and `PIPERY_RELEASE_DEX_CLIENT_ID=pipery-release-bot`.
 
 ## API
 

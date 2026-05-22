@@ -10,9 +10,15 @@ import (
 type Config struct {
 	ListenAddr     string                      `json:"listen_addr"`
 	APIToken       string                      `json:"api_token"`
+	OIDC           OIDC                        `json:"oidc"`
 	Target         Target                      `json:"target"`
 	BranchPatterns []BranchPattern             `json:"branch_patterns"`
 	Installations  map[string]GitHubAppInstall `json:"installations"`
+}
+
+type OIDC struct {
+	IssuerURL string `json:"issuer_url"`
+	ClientID  string `json:"client_id"`
 }
 
 type Target struct {
@@ -56,6 +62,12 @@ func Load(path string) (Config, error) {
 	}
 	if cfg.APIToken == "" {
 		cfg.APIToken = os.Getenv("PIPERY_RELEASE_API_TOKEN")
+	}
+	if cfg.OIDC.IssuerURL == "" {
+		cfg.OIDC.IssuerURL = os.Getenv("PIPERY_DEX_ISSUER")
+	}
+	if cfg.OIDC.ClientID == "" {
+		cfg.OIDC.ClientID = os.Getenv("PIPERY_RELEASE_DEX_CLIENT_ID")
 	}
 	if len(cfg.BranchPatterns) == 0 {
 		return Config{}, errors.New("at least one branch pattern is required")

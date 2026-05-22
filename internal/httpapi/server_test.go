@@ -3,11 +3,13 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/pipery-dev/pipery-release-bot/internal/config"
 	"github.com/pipery-dev/pipery-release-bot/internal/release"
 )
@@ -57,6 +59,29 @@ func TestBearerAuthProtectsExecuteButNotHealth(t *testing.T) {
 	server.Routes().ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/v1/release-plans/execute", strings.NewReader(`{}`)))
 	if rec.Code != http.StatusUnauthorized {
 		t.Fatalf("execute status = %d, want 401", rec.Code)
+	}
+}
+
+func TestDexAuthAcceptsVerifiedBearerToken(t *testing.T) {
+	server := NewServer(release.NewService(
+		config.Target{},
+		[]config.BranchPattern{{Pattern: "release/{version}"}},
+		&handlerGitHub{base: release.GitRef{Ref: "refs/heads/main", SHA: "abc123"}},
+	), &authenticator{verifier: fakeVerifier{validToken: "dex-token"}})
+
+	req := httptest.NewRequest(http.MethodPost, "/v1/release-plans/execute", strings.NewReader(`{
+		"owner":"pipery-dev",
+		"repo":"pipery",
+		"base_ref":"main",
+		"version":"v1.2.3"
+	}`))
+	req.Header.Set("Authorization", "Bearer dex-token")
+	rec := httptest.NewRecorder()
+
+	server.Routes().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("execute status = %d, want 200; body: %s", rec.Code, rec.Body.String())
 	}
 }
 
@@ -114,6 +139,17 @@ func assertErrorResponse(t *testing.T, body, want string) {
 
 type handlerGitHub struct {
 	base release.GitRef
+}
+
+type fakeVerifier struct {
+	validToken string
+}
+
+func (v fakeVerifier) Verify(_ context.Context, token string) (*oidc.IDToken, error) {
+	if token != v.validToken {
+		return nil, errors.New("invalid token")
+	}
+	return &oidc.IDToken{}, nil
 }
 
 func (g *handlerGitHub) GetRef(context.Context, string, int64, string, string, string) (release.GitRef, error) {

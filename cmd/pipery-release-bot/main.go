@@ -25,7 +25,15 @@ func main() {
 	auth := github.NewAppAuthenticator(http.DefaultClient, cfg.Installations)
 	client := github.NewClient(http.DefaultClient, auth)
 	svc := release.NewService(cfg.Target, cfg.BranchPatterns, client)
-	server := httpapi.NewServer(svc, cfg.APIToken)
+	apiAuth, err := httpapi.NewAuthenticator(context.Background(), httpapi.AuthConfig{
+		APIToken:  cfg.APIToken,
+		IssuerURL: cfg.OIDC.IssuerURL,
+		ClientID:  cfg.OIDC.ClientID,
+	})
+	if err != nil {
+		log.Fatalf("configure auth: %v", err)
+	}
+	server := httpapi.NewServer(svc, apiAuth)
 
 	addr := cfg.ListenAddr
 	if addr == "" {
