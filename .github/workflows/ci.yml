@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pipery-dev/pipery-golang-ci@v1
+      - uses: pipery-dev/golang-ci@v1
         with:
           go_version: "1.22"
           tests_path: "./..."
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pipery-dev/pipery-argocd-cd@v1
+      - uses: pipery-dev/argocd-cd@v1
         with:
           validate_helm_chart: "true"
           app_name: pipery-release-bot
@@ -52,7 +52,7 @@ jobs:
         uses: pipery-dev/pipery-argocd-cd@v1
         with:
           publish_helm_chart_update: "true"
-          argocd_repository: pipery-dev/pipery-argocd
+          argocd_repository: pipery-dev/argocd
           argocd_repository_token: ${{ secrets.PIPERY_ARGOCD_TOKEN }}
           app_name: pipery-release-bot
           app_namespace: pipery
