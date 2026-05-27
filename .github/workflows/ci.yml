@@ -60,5 +60,8 @@ jobs:
           chart_target_revision: ${{ github.ref_name }}
           image_repository: ghcr.io/${{ github.repository }}
           image_tag: ${{ github.ref_type == 'tag' && github.ref_name || github.sha }}
+          helm_values: |
+            imagePullSecrets:
+              - name: ghcr-pull-secret
           commit_user_name: pipery-release-bot
           commit_user_email: pipery-release-bot@users.noreply.github.com
