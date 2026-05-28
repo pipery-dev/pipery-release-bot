@@ -75,5 +75,9 @@ jobs:
           helm_values: |
             imagePullSecrets:
               - name: ghcr-pull-secret
+            hostAliases:
+              - ip: 172.25.0.2
+                hostnames:
+                  - auth.pipery.dev
           commit_user_name: pipery-release-bot
           commit_user_email: pipery-release-bot@users.noreply.github.com
